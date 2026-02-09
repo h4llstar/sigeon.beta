@@ -67,7 +67,7 @@ Utility.IsExposed = function(obj)
 	if not Utility.IsAlive(LocalPlayer) or not Utility.IsAlive(obj) then return false end
 
 	RayParams.FilterDescendantsInstances = {LocalPlayer.Character}
-	local Result = workspace:Raycast(LocalPlayer.Character.PrimaryPart.Position, obj.PrimaryPart.Position - LocalPlayer.Character.PrimaryPart.Position, RayParams)
+	local Result = workspace:Raycast(LocalPlayer.Character.PrimaryPart.Position, obj.Character.PrimaryPart.Position - LocalPlayer.Character.PrimaryPart.Position, RayParams)
 	if Result then
 		return Result.Instance:IsDescendantOf(obj.Character)
 	end
