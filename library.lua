@@ -16,6 +16,7 @@ local HttpService = cloneref(game:GetService("HttpService"))
 local RunService = cloneref(game:GetService("RunService"))
 local Players = cloneref(game:GetService("Players"))
 local LocalPlayer = Players.LocalPlayer
+local ConfigTable = {Modules = {}}
 local Configuration = {}
 Configuration.SetupModule = function(tname, ena, keyb)
 	if not ConfigTable.Modules[tname] then
@@ -57,7 +58,6 @@ local gethui = gethui or function()
 end
 
 local CurrentGame = "sigeon" .. "/" .. game.PlaceId .. ".lua"
-local ConfigTable = { Modules = {}}
 if not isfolder("sigeon") then makefolder("sigeon") end
 
 if isfile(CurrentGame) then
