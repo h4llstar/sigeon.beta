@@ -1,4 +1,4 @@
-repeat wait() until game:IsLoaded() and workspace.CurrentCamera
+repeat task.wait() until game:IsLoaded() and workspace.CurrentCamera
 local Utility = {}
 local cloneref = cloneref or function(obj) return obj end
 
