@@ -75,6 +75,10 @@ Utility.IsExposed = function(obj)
 	return true
 end
 
+Utility.GetMagnitude = function(pos1, pos2)
+	return (pos1 - pos2).Magnitude
+end
+
 Utility.CheckTool = function(toolname)
 	for _, v in pairs(LocalPlayer.Character:GetChildren()) do
 		if v:IsA("Tool") and v.Name:lower():match(toolname) then
