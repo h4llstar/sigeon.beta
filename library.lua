@@ -211,7 +211,7 @@ function Library:Initialize()
 	GameLabel.Position = UDim2.new(0.680000007, 0, 0.5, 0)
 	GameLabel.Size = UDim2.new(0, 100, 0, 23)
 	GameLabel.Font = Enum.Font.Nunito
-	GameLabel.Text = string.lower(game.Name)
+	GameLabel.Text = game.PlaceId
 	GameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 	GameLabel.TextScaled = true
 	GameLabel.TextSize = 16.000
