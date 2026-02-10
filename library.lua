@@ -71,7 +71,7 @@ if isfile(CurrentGame) then
 end
 
 task.spawn(function()
-	while task.wait(5) do
+	while task.wait(2) do
 		writefile(CurrentGame, HttpService:JSONEncode(ConfigTable))
 	end
 end)
