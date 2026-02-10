@@ -310,6 +310,7 @@ function Library:Initialize()
 	VisualFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	VisualFrame.BorderSizePixel = 0
 	VisualFrame.Size = UDim2.new(1, 0, 1, 0)
+	VisualFrame.Visible = false
 
 	local ArrayContainer = Instance.new("Frame")
 	ArrayContainer.Parent = VisualFrame
