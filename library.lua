@@ -139,7 +139,7 @@ function Library:Initialize()
 	MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 	MainFrame.Size = UDim2.new(0, 650, 0, 450)
-	MainFrame.Visible = false
+	MainFrame.Visible = true
 
 	local UICorner = Instance.new("UICorner")
 	UICorner.CornerRadius = UDim.new(0, 4)
@@ -310,7 +310,7 @@ function Library:Initialize()
 	VisualFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	VisualFrame.BorderSizePixel = 0
 	VisualFrame.Size = UDim2.new(1, 0, 1, 0)
-	VisualFrame.Visible = false
+	VisualFrame.Visible = true
 
 	local ArrayContainer = Instance.new("Frame")
 	ArrayContainer.Parent = VisualFrame
@@ -353,96 +353,6 @@ function Library:Initialize()
 	Logo.Size = UDim2.new(0, 125, 0, 125)
 	Logo.Image = "rbxassetid://135318918544831"
 	Logo.ScaleType = Enum.ScaleType.Crop
-	
-	--
-	 
-	local TargetHUD = Instance.new("Frame")
-	TargetHUD.Parent = VisualFrame
-	TargetHUD.BackgroundColor3 = Color3.fromRGB(24, 34, 48)
-	TargetHUD.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	TargetHUD.Position = UDim2.new(0, 620, 0, 520)
-	TargetHUD.Size = UDim2.new(0, 160, 0, 70)
-	TargetHUD.Visible = false
-	Draggable(TargetHUD)
-	
-	local UICorner_15 = Instance.new("UICorner")
-	UICorner_15.CornerRadius = UDim.new(0, 4)
-	UICorner_15.Parent = TargetHUD
-	
-	CreateStroke(TargetHUD)
-
-	local ImageLabel_2 = Instance.new("ImageLabel")
-	ImageLabel_2.Parent = TargetHUD
-	ImageLabel_2.AnchorPoint = Vector2.new(0.5, 0.5)
-	ImageLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	ImageLabel_2.BackgroundTransparency = 1.000
-	ImageLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	ImageLabel_2.BorderSizePixel = 0
-	ImageLabel_2.Position = UDim2.new(0.184375003, 0, 0.407142848, 0)
-	ImageLabel_2.Size = UDim2.new(0, 40, 0, 40)
-	ImageLabel_2.Image = "rbxassetid://89022270094032"
-
-	local UICorner_16 = Instance.new("UICorner")
-	UICorner_16.CornerRadius = UDim.new(0, 4)
-	UICorner_16.Parent = ImageLabel_2
-		
-	CreateStroke(ImageLabel_2, Color3.fromRGB(255, 255, 255), 1)
-
-	local BackFrame = Instance.new("Frame")
-	BackFrame.Parent = TargetHUD
-	BackFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-	BackFrame.BackgroundColor3 = Color3.fromRGB(27, 42, 53)
-	BackFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	BackFrame.BorderSizePixel = 0
-	BackFrame.Position = UDim2.new(0.5, 0, 0.82, 0)
-	BackFrame.Size = UDim2.new(1, -20, 0, 5)
-
-	local FrontFrame = Instance.new("Frame")
-	FrontFrame.Parent = BackFrame
-	FrontFrame.BackgroundColor3 = Color3.fromRGB(45, 65, 95)
-	FrontFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	FrontFrame.BorderSizePixel = 0
-	FrontFrame.Size = UDim2.new(1, -50, 1, 0)
-
-	local TextLabel_10 = Instance.new("TextLabel")
-	TextLabel_10.Parent = TargetHUD
-	TextLabel_10.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	TextLabel_10.BackgroundTransparency = 1.000
-	TextLabel_10.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	TextLabel_10.BorderSizePixel = 0
-	TextLabel_10.Position = UDim2.new(0, 55, 0, 5)
-	TextLabel_10.Size = UDim2.new(1, -55, 0, 25)
-	TextLabel_10.Font = Enum.Font.SourceSans
-	TextLabel_10.TextColor3 = Color3.fromRGB(255, 255, 255)
-	TextLabel_10.TextScaled = true
-	TextLabel_10.TextSize = 14.000
-	TextLabel_10.TextWrapped = true
-	TextLabel_10.TextXAlignment = Enum.TextXAlignment.Left
-
-	local UITextSizeConstraint_17 = Instance.new("UITextSizeConstraint")
-	UITextSizeConstraint_17.Parent = TextLabel_10
-	UITextSizeConstraint_17.MaxTextSize = 14
-
-	local TextLabel_11 = Instance.new("TextLabel")
-	TextLabel_11.Parent = TargetHUD
-	TextLabel_11.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	TextLabel_11.BackgroundTransparency = 1.000
-	TextLabel_11.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	TextLabel_11.BorderSizePixel = 0
-	TextLabel_11.Position = UDim2.new(0, 55, 0, 25)
-	TextLabel_11.Size = UDim2.new(1, -55, 0, 25)
-	TextLabel_11.Font = Enum.Font.SourceSans
-	TextLabel_11.TextColor3 = Color3.fromRGB(255, 255, 255)
-	TextLabel_11.TextScaled = true
-	TextLabel_11.TextSize = 14.000
-	TextLabel_11.TextWrapped = true
-	TextLabel_11.TextXAlignment = Enum.TextXAlignment.Left
-
-	local UITextSizeConstraint_18 = Instance.new("UITextSizeConstraint")
-	UITextSizeConstraint_18.Parent = TextLabel_11
-	UITextSizeConstraint_18.MaxTextSize = 14
-	
-	--
 	
 	local ArrayTable = {}
 	local function Insert_Array(name)
@@ -491,36 +401,6 @@ function Library:Initialize()
 		for i, v in ipairs(ArrayTable) do
 			v.LayoutOrder = i
 		end
-	end
-	
-	function Core:DisplayTarget(Datas)
-		Datas = {
-			Name = Datas.Name or "failed_get_name",
-			Thumbnail = Datas.Thumbnail or "rbxassetid://89022270094032",
-			Humanoid = Datas.Humanoid or LocalPlayer.Character:FindFirstChildOfClass("Humanoid"),
-			Visible = Datas.Visible or false,
-		}
-		
-		TargetHUD.Visible = Datas.Visible
-		TextLabel_10.Text = string.lower(Datas.Name)
-		ImageLabel_2.Image = Datas.Thumbnail
-		
-		local Calculated = Datas.Humanoid.Health / Datas.Humanoid.MaxHealth
-		if Datas.Humanoid.Health > 0 then
-			TweenService:Create(FrontFrame, TweenInfo.new(0.5), {Size = UDim2.new(Calculated, 0, 1, 0)}):Play()
-		elseif Datas.Humanoid.Health < 0 then
-			TweenService:Create(FrontFrame, TweenInfo.new(0.5), {Size = UDim2.new(-0, 0, 1, 0)}):Play()
-		else
-			TweenService:Create(FrontFrame, TweenInfo.new(0.5), {Size = UDim2.new(-0, 0, 1, 0)}):Play()
-		end
-		if LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Health > Datas.Humanoid.Health then
-			TextLabel_11.Text = "winning"
-		elseif LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Health < Datas.Humanoid.Health then
-			TextLabel_11.Text = "losing"
-		elseif LocalPlayer.Character:FindFirstChildOfClass("Humanoid").Health == Datas.Humanoid.Health then
-			TextLabel_11.Text = "tie"
-		end
-		return Datas
 	end
 	
 	function Core:CreateNotification(title, desc, dur)
