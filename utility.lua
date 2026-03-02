@@ -1,62 +1,37 @@
-repeat task.wait() until game:IsLoaded() and workspace.CurrentCamera
-local Utility = {}
 local cloneref = cloneref or function(obj) return obj end
 
 local RunService = cloneref(game:GetService("RunService"))
 local Players = cloneref(game:GetService("Players"))
 local LocalPlayer = Players.LocalPlayer
-
 local RayParams = RaycastParams.new()
 RayParams.FilterType = Enum.RaycastFilterType.Exclude
-local Connections = {
-	RenderStepped = {},
-	Heartbeat = {},
-	Stepped = {}
-}
+
+local Utility = {}
+local Connections = {RenderStepped = {}, Heartbeat = {}, Stepped = {}}
 
 Utility.BindAdd = function(types, name, delays, callback)
 	if Connections[types][name] then return end
-	if (delays == 0 or delays == nil) then
-		Connections[types][name] = {
-			conn = RunService[types]:Connect(callback),
-			delay = 0,
-			elapsed = 0,
-			callback = callback
-		}
-		return
-	end
-	local data = {
-		delay = delays,
-		elapsed = 0,
-		callback = callback
-	}
-	data.conn = RunService[types]:Connect(function(dt)
-		data.elapsed += dt
-		if data.elapsed >= data.delay then
-			data.elapsed = 0
-			data.callback()
+	local Bind = {delay = delays or 0, elapsed = 0, callback = callback}
+	local Handler
+	if delays and delays > 0 then
+		Handler = function(dt)
+			Bind.elapsed += dt
+			if Bind.elapsed < Bind.delay then return end
+			Bind.elapsed = 0
+			callback()
 		end
-	end)
-	Connections[types][name] = data
-end
-
-Utility.BindUpdate = function(types, name, delays)
-	local data = Connections[types][name]
-	if not data then return end
-	if not data.delay then return end
-	if data.delay == delays then return end
-	data.delay = delays
-	data.elapsed = 0
+	else
+		Handler = callback
+	end
+	Bind.conn = RunService[types]:Connect(Handler)
+	Connections[types][name] = Bind
 end
 
 Utility.BindRemove = function(types, name)
-	local data = Connections[types][name]
-	if data then
-		if data.conn then
-			data.conn:Disconnect()
-		end
-		Connections[types][name] = nil
-	end
+	local Bind = Connections[types][name]
+	if not Bind then return end
+	Bind.conn:Disconnect()
+	Connections[types][name] = nil
 end
 
 Utility.IsAlive = function(obj)
@@ -65,18 +40,39 @@ end
 
 Utility.IsExposed = function(obj)
 	if not Utility.IsAlive(LocalPlayer) or not Utility.IsAlive(obj) then return false end
-
 	RayParams.FilterDescendantsInstances = {LocalPlayer.Character}
 	local Result = workspace:Raycast(LocalPlayer.Character.PrimaryPart.Position, obj.Character.PrimaryPart.Position - LocalPlayer.Character.PrimaryPart.Position, RayParams)
 	if Result then
 		return Result.Instance:IsDescendantOf(obj.Character)
 	end
-	
 	return true
+end
+
+Utility.GetTeam = function(v)
+	if v.Team and LocalPlayer.Team then
+		if v.Team == LocalPlayer.Team then
+			return LocalPlayer.Team
+		end
+		if v.Team.Name == LocalPlayer.Team.Name then
+			return LocalPlayer.Team
+		end
+		if v.Team.TeamColor == LocalPlayer.Team.TeamColor then
+			return LocalPlayer.Team
+		end
+	end
+	return nil
 end
 
 Utility.GetMagnitude = function(pos1, pos2)
 	return (pos1 - pos2).Magnitude
+end
+
+Utility.GetTool = function(toolname)
+	for _, v in pairs(LocalPlayer.Backpack:GetChildren()) do
+		if v:IsA("Tool") and v.Name:lower():match(toolname) then
+			return v
+		end
+	end
 end
 
 Utility.CheckTool = function(toolname)
@@ -88,71 +84,55 @@ Utility.CheckTool = function(toolname)
 end
 
 Utility.GetNearestEntity = function(MaxDist, Mode, TeamCheck, WallCheck, Direction)
-	local Entity
 	local MinDist = math.huge
-
-	for _, plr in pairs(Players:GetPlayers()) do
-		if plr ~= LocalPlayer and plr.Character and Utility.IsAlive(plr) then
-			if not TeamCheck or plr.Team ~= LocalPlayer.Team then
-
-				if WallCheck and not Utility.IsExposed(plr) then continue end
-
-				local Distances = (plr.Character.PrimaryPart.Position - LocalPlayer.Character.PrimaryPart.Position)
-				local Magnitude = Distances.Magnitude
-
-				if Magnitude <= MaxDist then
-					local Angle = math.deg(LocalPlayer.Character.PrimaryPart.CFrame.LookVector:Angle(Distances.Unit))
-
-					if Direction and Direction < 360 and Angle > (Direction / 2) then continue end
-					local Selected
-					if Mode == "Closest" then
-						Selected = Magnitude
-					elseif Mode == "Lowest" then
-						Selected = plr.Character:FindFirstChildOfClass("Humanoid").Health
-					elseif Mode == "Angle" then
-						Selected = Angle
-					end
-
-					if Selected < MinDist then
-						MinDist = Selected
-						Entity = plr.Character
-					end
+	local Entity
+	for _, v in pairs(Players:GetPlayers()) do
+		if v ~= LocalPlayer and Utility.IsAlive(v) then
+			if TeamCheck and Utility.GetTeam(v) then continue end
+			if WallCheck and not Utility.IsExposed(v) then continue end
+			
+			local Distances = (v.Character.PrimaryPart.Position - LocalPlayer.Character.PrimaryPart.Position)
+			local Magnitude = Distances.Magnitude
+			if Magnitude <= MaxDist then
+				local Angle = math.deg(LocalPlayer.Character.PrimaryPart.CFrame.LookVector:Angle(Distances.Unit))
+				if Direction and Direction < 360 then
+					if Angle > (Direction / 2) then continue end
+				end
+				local Selected
+				if Mode == "Closest" then
+					Selected = Magnitude
+				elseif Mode == "Lowest" then
+					Selected = v.Character:FindFirstChildOfClass("Humanoid").Health
+				elseif Mode == "Angle" then
+					Selected = Angle
+				end
+				if Selected and Selected < MinDist then
+					MinDist = Selected
+					Entity = v.Character
 				end
 			end
 		end
 	end
-
 	return Entity
 end
 
-Utility.GetNearestPart = function(obj)
-	local Closest
-	local MinDist = math.huge
-	
-	for _, v in pairs(obj:GetChildren()) do
-		if v:IsA("BasePart") or v:IsA("MeshPart") then
-			local Distance = Utility.GetMagnitude(v.Position - LocalPlayer.Character.PrimaryPart.Position)
-			if Distance < MinDist then
-				MinDist = Distance
-				Closest = v
-			end
-		end
-	end
-	
-	return Closest
-end
-
 Utility.HighlightAdd = function(obj)
-	if not obj:FindFirstChildWhichIsA("Highlight") then
-		local Highlight = Instance.new("Highlight")
-		Highlight.FillTransparency = 1
-		Highlight.OutlineColor = Color3.fromRGB(63, 92, 132)
-		Highlight.Parent = obj
-		Highlight.OutlineTransparency = 0
+	if not obj or not obj:IsA("Model") then return end
+	if obj:FindFirstChildWhichIsA("Highlight") then return end
+	local Highlight = Instance.new("Highlight")
+	Highlight.FillTransparency = 1
+	Highlight.OutlineTransparency = 0
+	local NewColor = Color3.fromRGB(63, 92, 132)
+	local plr = Players:GetPlayerFromCharacter(obj)
+	if plr and plr.Team and plr.Team.TeamColor then
+		NewColor = plr.Team.TeamColor.Color
 	end
+	Highlight.OutlineColor = NewColor
+	Highlight.Parent = obj
 end
 
 Utility.HighlightRemove = function(obj)
+	if not obj or not obj:IsA("Model") then return end
 	local Highlight = obj:FindFirstChildWhichIsA("Highlight")
 	if Highlight then
 		Highlight:Destroy()
