@@ -2,11 +2,13 @@ local cloneref = cloneref or function(obj) return obj end
 
 local RunService = cloneref(game:GetService("RunService"))
 local Players = cloneref(game:GetService("Players"))
+local CurrentCamera = workspace.CurrentCamera
 local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+local Utility = {}
+
 local RayParams = RaycastParams.new()
 RayParams.FilterType = Enum.RaycastFilterType.Exclude
-
-local Utility = {}
 local Connections = {RenderStepped = {}, Heartbeat = {}, Stepped = {}}
 
 Utility.BindAdd = function(types, name, delays, callback)
@@ -70,7 +72,8 @@ Utility.IsExposed = function(obj)
 end
 
 Utility.IsFirstPerson = function()
-	  return (LocalPlayer.Character.Head.CFrame.Position - workspace.CurrentCamera.CFrame.Position).Magnitude < 1
+	if not Utility.IsAlive(LocalPlayer) then return end
+	return (LocalPlayer.Character.Head.CFrame.Position - workspace.CurrentCamera.CFrame.Position).Magnitude < 1
 end
 
 Utility.GetTeam = function(v)
@@ -94,7 +97,7 @@ end
 
 Utility.GetTool = function(toolname)
 	for _, v in pairs(LocalPlayer.Backpack:GetChildren()) do
-		if v:IsA("Tool") and v.Name:lower():match(toolname) then
+		if v:IsA("Tool") and v.Name:lower():find(toolname:lower(), 1, true) then
 			return v
 		end
 	end
@@ -102,44 +105,71 @@ end
 
 Utility.CheckTool = function(toolname)
 	for _, v in pairs(LocalPlayer.Character:GetChildren()) do
-		if v:IsA("Tool") and v.Name:lower():match(toolname) then
+		if v:IsA("Tool") and v.Name:lower():find(toolname:lower(), 1, true) then
 			return v
 		end
 	end
 end
 
-Utility.GetNearestEntity = function(MaxDist, Mode, TeamCheck, WallCheck, Direction)
-	local MinDist = math.huge
-	local Entity
-	for _, v in pairs(Players:GetPlayers()) do
-		if v ~= LocalPlayer and Utility.IsAlive(v) then
-			if TeamCheck and Utility.GetTeam(v) then continue end
-			if WallCheck and not Utility.IsExposed(v) then continue end
-			
-			local Distances = (v.Character.PrimaryPart.Position - LocalPlayer.Character.PrimaryPart.Position)
-			local Magnitude = Distances.Magnitude
-			if Magnitude <= MaxDist then
-				local Angle = math.deg(LocalPlayer.Character.PrimaryPart.CFrame.LookVector:Angle(Distances.Unit))
-				if Direction and Direction < 360 then
-					if Angle > (Direction / 2) then continue end
-				end
-				local Selected
-				if Mode == "Closest" then
-					Selected = Magnitude
-				elseif Mode == "Lowest" then
-					Selected = v.Character:FindFirstChildOfClass("Humanoid").Health
-				elseif Mode == "Angle" then
-					Selected = Angle
-				end
-				if Selected and Selected < MinDist then
-					MinDist = Selected
-					Entity = v
+Utility.GetNearestEntity = {
+	Distance = function(MaxDist, Mode, TeamCheck, WallCheck, Direction)
+		local MinDist = math.huge
+		local Entity
+		for _, v in pairs(Players:GetPlayers()) do
+			if v ~= LocalPlayer and Utility.IsAlive(v) then
+				if TeamCheck and Utility.GetTeam(v) then continue end
+				if WallCheck and not Utility.IsExposed(v) then continue end
+
+				local Distances = (v.Character.PrimaryPart.Position - LocalPlayer.Character.PrimaryPart.Position)
+				local Magnitude = Distances.Magnitude
+				if Magnitude <= MaxDist then
+					local Angle = math.deg(LocalPlayer.Character.PrimaryPart.CFrame.LookVector:Angle(Distances.Unit))
+					if Direction and Direction < 360 then
+						if Angle > (Direction / 2) then continue end
+					end
+					local Selected
+					if Mode == "Closest" then
+						Selected = Magnitude
+					elseif Mode == "Lowest" then
+						Selected = v.Character:FindFirstChildOfClass("Humanoid").Health
+					elseif Mode == "Angle" then
+						Selected = Angle
+					end
+					if Selected and Selected < MinDist then
+						MinDist = Selected
+						Entity = v
+					end
 				end
 			end
 		end
-	end
-	return Entity
-end
+		return Entity
+	end,
+	Mouse = function(MaxDist, FOV, TeamCheck, WallCheck)
+		local MinDist = math.huge
+		local Entity
+		for _, v in pairs(Players:GetPlayers()) do
+			if v ~= LocalPlayer and Utility.IsAlive(v) then
+				if TeamCheck and Utility.GetTeam(v) then continue end
+				if WallCheck and not Utility.IsExposed(v) then continue end
+
+				local Distances = (v.Character.PrimaryPart.Position - LocalPlayer.Character.PrimaryPart.Position)
+				local Magnitude = Distances.Magnitude
+				if Magnitude <= MaxDist then
+					local Pos, Visible = CurrentCamera:WorldToViewportPoint(v.Character.PrimaryPart.Position)
+					if Visible then
+						local Dist = (Vector2.new(Pos.X, Pos.Y) - Vector2.new(Mouse.X, Mouse.Y)).Magnitude
+						if Dist <= FOV and Dist < MinDist then
+							MinDist = Dist
+							Entity = v
+						end
+					end
+				end
+			end
+		end
+
+		return Entity
+	end,
+}
 
 Utility.GetPrediction = function(primarypart, origin, speed)
 	local rel = primarypart.Position - origin
