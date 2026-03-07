@@ -139,7 +139,7 @@ function Library:Initialize()
 	MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 	MainFrame.Size = UDim2.new(0, 650, 0, 450)
-	MainFrame.Visible = true
+	MainFrame.Visible = false
 
 	local UICorner = Instance.new("UICorner")
 	UICorner.CornerRadius = UDim.new(0, 4)
