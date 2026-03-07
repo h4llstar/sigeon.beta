@@ -73,7 +73,7 @@ end
 
 Utility.IsFirstPerson = function()
 	if not Utility.IsAlive(LocalPlayer) then return end
-	return (LocalPlayer.Character.Head.CFrame.Position - workspace.CurrentCamera.CFrame.Position).Magnitude < 1
+	return (LocalPlayer.Character.Head.CFrame.Position - workspace.CurrentCamera.CFrame.Position).Magnitude < 2
 end
 
 Utility.GetTeam = function(v)
