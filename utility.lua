@@ -173,7 +173,7 @@ Utility.GetNearestEntity = {
 
 Utility.GetPrediction = function(primarypart, origin, speed)
 	local rel = primarypart.Position - origin
-	local velo = primarypart.AssemblyLinearVelocity
+	local velo = Vector3.new(primarypart.AssemblyLinearVelocity.X, 0, primarypart.AssemblyLinearVelocity.Z)
 
 	local a = velo:Dot(velo) - speed * speed
 	local b = 2 * rel:Dot(velo)
@@ -194,7 +194,8 @@ Utility.GetPrediction = function(primarypart, origin, speed)
 	else
 		return primarypart.Position
 	end
-	return primarypart.Position + velo * t	
+	local predicted = primarypart.Position + velo * t
+	return Vector3.new(predicted.X, primarypart.Position.Y, predicted.Z)
 end
 
 Utility.HighlightAdd = function(obj)
