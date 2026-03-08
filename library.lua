@@ -699,7 +699,11 @@ function Library:Initialize()
 			local UITextSizeConstraint_10 = Instance.new("UITextSizeConstraint")
 			UITextSizeConstraint_10.Parent = TextBox
 			UITextSizeConstraint_10.MaxTextSize = 14
-
+			if ToggleButton.Keybind and ToggleButton.Keybind ~= "Euro" then
+    			TextBox.Text = ToggleButton.Keybind
+    			TextBox.PlaceholderText = ""
+			end
+			
 			local MenuContainer = Instance.new("Frame")
 			MenuContainer.Parent = ToggleHolder
 			MenuContainer.BackgroundColor3 = Color3.fromRGB(24, 34, 48)
