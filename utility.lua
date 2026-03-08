@@ -246,6 +246,7 @@ Utility.BillBoard = {
 		local ImageLabel = Instance.new("ImageLabel")
 		ImageLabel.Parent = obj:FindFirstChildWhichIsA("BillboardGui")
 		ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		ImageLabel.BackgroundTransparency = 1
 		ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		ImageLabel.BorderSizePixel = 0
 		ImageLabel.Size = UDim2.new(0.188, 0, 1, 0)
