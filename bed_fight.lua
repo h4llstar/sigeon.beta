@@ -582,7 +582,7 @@ task.defer(function()
 	local ClockTime = Lighting.ClockTime
 	local Signal, New = nil, 12
 	TimeChanger = Sections.Visual:CreateToggle({
-		Name = "TimeChanger",
+		Name = "Time Changer",
 		Callback = function(callback)
 			if callback then
 				Lighting.ClockTime = New
@@ -617,7 +617,7 @@ task.defer(function()
 	local Original
 
 	ProjectileAssist = Sections.World:CreateToggle({
-		Name = "ProjectileAssist",
+		Name = "Projectile Assist",
 		Callback = function(callback)
 			repeat task.wait() until BedFight.ToolHandlers.Ranged.UpdateBeam
 			if callback then
