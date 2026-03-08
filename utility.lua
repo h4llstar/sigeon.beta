@@ -224,33 +224,43 @@ Utility.BillBoard = {
 	Create = function(obj)
 		if not obj or not obj:IsA("Model") then return end
 		if obj:FindFirstChildWhichIsA("BillboardGui") then return end
+		
 		local BillboardGui = Instance.new("BillboardGui")
 		BillboardGui.Parent = obj
-		BillboardGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-		BillboardGui.Active = true
 		BillboardGui.AlwaysOnTop = true
-		BillboardGui.ExtentsOffset = Vector3.new(0, 6, 0)
-		BillboardGui.LightInfluence = 1.000
-		BillboardGui.Size = UDim2.new(28, 0, 6, 0)
-		
-		local UIListLayout = Instance.new("UIListLayout")
-		UIListLayout.Parent = BillboardGui
-		UIListLayout.FillDirection = Enum.FillDirection.Horizontal
-		UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		BillboardGui.StudsOffsetWorldSpace = Vector3.new(0, 3, 0)
+		BillboardGui.Size = UDim2.fromOffset(36, 36)
+		BillboardGui.ClipsDescendants = false
 
+		local Frame = Instance.new("Frame")
+		Frame.Size = UDim2.fromScale(1, 1)
+		Frame.BackgroundTransparency = 1
+		Frame.Parent = BillboardGui
+		
+		local Corner = Instance.new("UICorner")
+		Corner.CornerRadius = UDim.new(0, 4)
+		Corner.Parent = Frame
+
+		local Layout = Instance.new("UIListLayout")
+		Layout.FillDirection = Enum.FillDirection.Horizontal
+		Layout.Padding = UDim.new(0, 4)
+		Layout.VerticalAlignment = Enum.VerticalAlignment.Center
+		Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+		Layout.Parent = Frame
+		Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+			BillboardGui.Size = UDim2.fromOffset(math.max(Layout.AbsoluteContentSize.X + 4, 36), 36)
+		end)
 	end,
 	Add = function(obj, image)
 		if not obj or not obj:IsA("Model") then return end
-		if not obj:FindFirstChildWhichIsA("BillboardGui") then return end
+		local BillboardGui = obj:FindFirstChildWhichIsA("BillboardGui")
+		if not BillboardGui then return end
+
 		local ImageLabel = Instance.new("ImageLabel")
-		ImageLabel.Parent = obj:FindFirstChildWhichIsA("BillboardGui")
-		ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		ImageLabel.Size = UDim2.fromOffset(32, 32)
 		ImageLabel.BackgroundTransparency = 1
-		ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		ImageLabel.BorderSizePixel = 0
-		ImageLabel.Size = UDim2.new(0.188, 0, 1, 0)
 		ImageLabel.Image = image
+		ImageLabel.Parent = BillboardGui:FindFirstChildWhichIsA("Frame")
 	end,
 	Delete = function(obj, image)
 		if not obj or not obj:IsA("Model") then return end
