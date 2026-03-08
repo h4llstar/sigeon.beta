@@ -73,7 +73,7 @@ end
 
 Utility.IsFirstPerson = function()
 	if not Utility.IsAlive(LocalPlayer) then return end
-	return (LocalPlayer.Character.Head.CFrame.Position - workspace.CurrentCamera.CFrame.Position).Magnitude < 2
+	return (LocalPlayer.Character.Head.CFrame.Position - workspace.CurrentCamera.CFrame.Position).Magnitude < 1
 end
 
 Utility.GetTeam = function(v)
@@ -219,5 +219,54 @@ Utility.HighlightRemove = function(obj)
 		Highlight:Destroy()
 	end
 end
+
+Utility.BillBoard = {
+	Create = function(obj)
+		if not obj or not obj:IsA("Model") then return end
+		if obj:FindFirstChildWhichIsA("BillboardGui") then return end
+		local BillboardGui = Instance.new("BillboardGui")
+		BillboardGui.Parent = obj
+		BillboardGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+		BillboardGui.Active = true
+		BillboardGui.AlwaysOnTop = true
+		BillboardGui.ExtentsOffset = Vector3.new(0, 6, 0)
+		BillboardGui.LightInfluence = 1.000
+		BillboardGui.Size = UDim2.new(28, 0, 6, 0)
+		
+		local UIListLayout = Instance.new("UIListLayout")
+		UIListLayout.Parent = BillboardGui
+		UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+		UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+	end,
+	Add = function(obj, image)
+		if not obj or not obj:IsA("Model") then return end
+		if not obj:FindFirstChildWhichIsA("BillboardGui") then return end
+		local ImageLabel = Instance.new("ImageLabel")
+		ImageLabel.Parent = obj:FindFirstChildWhichIsA("BillboardGui")
+		ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		ImageLabel.BorderSizePixel = 0
+		ImageLabel.Size = UDim2.new(0.188, 0, 1, 0)
+		ImageLabel.Image = image
+	end,
+	Delete = function(obj, image)
+		if not obj or not obj:IsA("Model") then return end
+		if not obj:FindFirstChildWhichIsA("BillboardGui") then return end
+		for _, v in pairs(obj:FindFirstChildWhichIsA("BillboardGui"):GetChildren()) do
+			if v:IsA("ImageLabel") and v.Image == image then
+				v:Destroy()
+			end
+		end
+	end,
+	Remove = function(obj)
+		if not obj or not obj:IsA("Model") then return end
+		local BillboardGui = obj:FindFirstChildWhichIsA("BillboardGui")
+		if BillboardGui then
+			BillboardGui:Destroy()
+		end
+	end,
+}
 
 return Utility
